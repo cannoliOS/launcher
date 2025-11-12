@@ -14,10 +14,10 @@ func ShowMessage(message string, delay time.Duration) {
 }
 
 func ShowConfirmation(message string) bool {
-	return ShowCustomConfirmation(message, "Cancel", "Confirm", gaba.ButtonA)
+	return ShowCustomConfirmation(message, "Cancel", "Confirm", gaba.InternalButtonA)
 }
 
-func ShowCustomConfirmation(message string, cancelText string, confirmText string, confirmButton gaba.Button) bool {
+func ShowCustomConfirmation(message string, cancelText string, confirmText string, confirmButton gaba.InternalButton) bool {
 	result, err := gaba.ConfirmationMessage(message, []gaba.FooterHelpItem{
 		{ButtonName: "B", HelpText: cancelText},
 		{ButtonName: "A", HelpText: confirmText},

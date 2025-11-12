@@ -1,10 +1,10 @@
 package models
 
 import (
-	gcf "github.com/craterdog/go-collection-framework/v7"
+	"github.com/idsulik/go-collections/v3/stack"
 )
 
 type AppState struct {
 	Config      *Config
-	ScreenStack gcf.StackLike[string]
+	ScreenStack stack.Stack[string]
 }

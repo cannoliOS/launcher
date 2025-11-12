@@ -6,11 +6,10 @@ import (
 	"cannoliOS/utils"
 	"fmt"
 	"os"
-	"time"
 
 	_ "github.com/UncleJunVIP/certifiable"
 	gaba "github.com/UncleJunVIP/gabagool/pkg/gabagool"
-	module "github.com/craterdog/go-collection-framework/v7"
+	"github.com/idsulik/go-collections/v3/stack/arraystack"
 )
 
 func init() {
@@ -68,11 +67,10 @@ func main() {
 			case models.Select:
 				directory := sr.Output.(models.Directory)
 				logger.Debug(fmt.Sprintf("Selected directory: %s (path: %s)", directory.DisplayName, directory.Path))
-
 				currentScreen = ui.GameList{
 					Directory:      directory,
 					SearchFilter:   "",
-					DirectoryStack: module.Stack[models.Directory](),
+					DirectoryStack: arraystack.New[models.Directory](5),
 				}
 				logger.Debug("Switched to GameList screen")
 			case models.Action:
@@ -86,16 +84,16 @@ func main() {
 			gl := currentScreen.(ui.GameList)
 
 			if sr.Code == models.Back {
-				logger.Debug(fmt.Sprintf("Back action triggered, directory stack size: %d", gl.DirectoryStack.GetSize()))
+				logger.Debug(fmt.Sprintf("Back action triggered, directory stack size: %d", gl.DirectoryStack.Len()))
 
-				if gl.DirectoryStack.GetSize() == 0 {
+				if gl.DirectoryStack.Len() == 0 {
 					logger.Debug("Returning to MainMenu from GameList")
 					currentScreen = ui.MainMenu{
 						Data:     nil,
 						Position: models.Position{},
 					}
 				} else {
-					prev := gl.DirectoryStack.RemoveLast()
+					prev, _ := gl.DirectoryStack.Pop()
 					logger.Debug(fmt.Sprintf("Navigating back to directory: %s", prev.DisplayName))
 					currentScreen = ui.GameList{
 						Directory:      prev,
@@ -107,7 +105,7 @@ func main() {
 				selectedItem := sr.Output.([]models.Item)[0]
 				logger.Debug(fmt.Sprintf("Selected directory item: %s", selectedItem.Filename))
 
-				gl.DirectoryStack.AddValue(gl.Directory)
+				gl.DirectoryStack.Push(gl.Directory)
 				currentScreen = ui.GameList{
 					Directory:      selectedItem.ToDirectory(),
 					SearchFilter:   "",
@@ -116,7 +114,7 @@ func main() {
 				logger.Debug(fmt.Sprintf("Navigated into directory: %s", selectedItem.Filename))
 			} else if sr.Code == models.Select {
 				selectedItems := sr.Output.([]models.Item)
-				logger.Debug(fmt.Sprintf("Selected %d game item(s) for launch", len(selectedItems)))
+				logger.Debug(fmt.Sprintf("Selected %d game item for launch", len(selectedItems)))
 				for i, item := range selectedItems {
 					logger.Debug(fmt.Sprintf("  Item %d: %s", i+1, item.Filename))
 				}
@@ -132,12 +130,12 @@ func main() {
 
 				logger.Debug("Returning to cannoliOS after game launch")
 
-				currentScreen = ui.MainMenu{
-					Data:     nil,
-					Position: models.Position{},
+				currentScreen = ui.GameList{
+					Directory:      currentScreen.(ui.GameList).Directory,
+					SearchFilter:   currentScreen.(ui.GameList).SearchFilter,
+					DirectoryStack: currentScreen.(ui.GameList).DirectoryStack,
+					Position:       sr.Position,
 				}
-
-				time.Sleep(1250 * time.Millisecond)
 			} else {
 				logger.Debug(fmt.Sprintf("Unhandled code in GameList: %v", sr.Code))
 			}

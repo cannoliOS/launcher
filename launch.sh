@@ -11,7 +11,9 @@ if [ "$TRIMUI_MODEL" = "Trimui Brick" ]; then
 	echo 0 > /sys/class/led_anim/max_scale_f1f2
 fi
 
-trimui_inputd &
+trimui_inputd & # To Bind TSP and Brick
+
+$CANNOLI_DIR/bin/adbd &
 
 export HOME=/mnt/SDCARD
 

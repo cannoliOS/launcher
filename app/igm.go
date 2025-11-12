@@ -7,7 +7,6 @@ import (
 	"cannoliOS/utils"
 	"fmt"
 	"log"
-	"log/slog"
 	"os"
 	"os/signal"
 	"path/filepath"
@@ -47,7 +46,6 @@ func init() {
 		ShowBackground: true,
 		IsCannoli:      true,
 		LogFilename:    "igm.log",
-		LogLevel:       slog.LevelDebug,
 	})
 
 	utils.LoadConfig()

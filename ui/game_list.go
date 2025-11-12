@@ -8,13 +8,14 @@ import (
 	"strings"
 
 	"github.com/UncleJunVIP/gabagool/pkg/gabagool"
-	module "github.com/craterdog/go-collection-framework/v7"
+	"github.com/idsulik/go-collections/v3/stack"
 )
 
 type GameList struct {
 	Directory      models.Directory
 	SearchFilter   string
-	DirectoryStack module.StackLike[models.Directory]
+	DirectoryStack stack.Stack[models.Directory]
+	Position       models.Position
 }
 
 func (gl GameList) Name() models.ScreenName {
@@ -48,7 +49,7 @@ func (gl GameList) Draw() (models.ScreenReturn, error) {
 	var itemEntries []gabagool.MenuItem
 
 	for _, item := range roms {
-		if strings.HasPrefix(item.Filename, ".") { // Skip hidden files
+		if strings.HasPrefix(item.Filename, ".") {
 			continue
 		}
 
@@ -80,9 +81,15 @@ func (gl GameList) Draw() (models.ScreenReturn, error) {
 
 	options := gabagool.DefaultListOptions(title, allEntries)
 
-	//selectedIndex, visibleStartIndex := state.GetCurrentMenuPosition()
-	//options.SelectedIndex = selectedIndex
-	//options.VisibleStartIndex = visibleStartIndex
+	options.SelectedIndex = gl.Position.SelectedIndex
+
+	vsi := gl.Position.SelectedPosition
+
+	if vsi < len(allEntries) {
+		vsi = 0
+	}
+
+	options.VisibleStartIndex = vsi
 
 	options.SmallTitle = false
 	options.EmptyMessage = "No ROMs Found"
@@ -115,9 +122,7 @@ func (gl GameList) Draw() (models.ScreenReturn, error) {
 	}
 
 	if selection.IsSome() && selection.Unwrap().ActionTriggered {
-		//state.UpdateCurrentMenuPosition(selection.Unwrap().SelectedIndex, selection.Unwrap().VisiblePosition)
 	} else if selection.IsSome() && !selection.Unwrap().ActionTriggered && selection.Unwrap().SelectedIndex != -1 {
-		//state.UpdateCurrentMenuPosition(selection.Unwrap().SelectedIndex, selection.Unwrap().VisiblePosition)
 		var selectedItems []models.Item
 		rawSelection := selection.Unwrap().SelectedItems
 
@@ -125,9 +130,12 @@ func (gl GameList) Draw() (models.ScreenReturn, error) {
 			selectedItems = append(selectedItems, item.Metadata.(models.Item))
 		}
 		return models.ScreenReturn{
-			Output:   selectedItems,
-			Position: models.Position{},
-			Code:     models.Select,
+			Output: selectedItems,
+			Position: models.Position{
+				SelectedIndex:    selection.Unwrap().SelectedIndex,
+				SelectedPosition: selection.Unwrap().VisiblePosition,
+			},
+			Code: models.Select,
 		}, nil
 	} else if selection.IsSome() && selection.Unwrap().SelectedIndex == -1 {
 		return models.ScreenReturn{
