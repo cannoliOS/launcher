@@ -16,7 +16,7 @@ cannoli_OS
 `¯\_(ツ)_/¯`
 
 I built the [Game Manager](https://github.com/UncleJunVIP/nextui-game-manager) Pak
-for [NextUI](https://nextui.loveretro.games) and thought isn't this essentially a launch launcher?
+for [NextUI](https://nextui.loveretro.games) and thought isn't this essentially a launcher?
 
 Taking what I've learned from building Paks, I wanted to try building a no-frills launcher backed by RetroArch.
 
