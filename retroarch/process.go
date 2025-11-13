@@ -20,6 +20,7 @@ func Launch(gameName string, romPath string) (*exec.Cmd, error) {
 	}
 
 	args := []string{
+		//"--config", "/mnt/SDCARD/System/RetroArch/retroarch.cfg",
 		"-L", corePath,
 		romPath,
 	}

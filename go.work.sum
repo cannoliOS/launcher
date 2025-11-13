@@ -1,4 +1,5 @@
 github.com/UncleJunVIP/gabagool v0.0.95/go.mod h1:WsNPFEacGvE+g4sPnsa0xkjHGq9f9j5MNXkRwuQAI+0=
+github.com/UncleJunVIP/gabagool v0.1.3/go.mod h1:WsNPFEacGvE+g4sPnsa0xkjHGq9f9j5MNXkRwuQAI+0=
 github.com/craterdog/go-missing-utilities/v7 v7.5.0 h1:Bymc0kgrzt10itgqzLP2hJCO8jFIeG7e65O0lqA4RJE=
 github.com/craterdog/go-missing-utilities/v7 v7.5.0/go.mod h1:uEyTYeiSq4hzoJn9dPPZxGUKVjKU90v0xh0WhTnhRVs=
 github.com/kr/text v0.2.0/go.mod h1:eLer722TekiGuMkidMxC/pM04lWEeraHUUmBw8l2grE=

@@ -110,9 +110,10 @@ func (gl GameList) Draw() (models.ScreenReturn, error) {
 	options.EnableHelp = true
 	options.HelpTitle = "ROMs List Controls"
 	options.HelpText = []string{
-		"• X: Open Options",
+		"• X: Open Search",
 		"• Select: Toggle Multi-Select",
 		"• Start: Confirm Multi-Selection",
+		"• D-Pad Left / Right: Skip Pages",
 	}
 
 	selection, err := gabagool.List(options)

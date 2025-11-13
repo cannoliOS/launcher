@@ -5,7 +5,7 @@ go 1.25
 require github.com/UncleJunVIP/certifiable v1.0.0
 
 require (
-	github.com/UncleJunVIP/gabagool v0.1.2
+	github.com/UncleJunVIP/gabagool v0.1.3
 	github.com/idsulik/go-collections/v3 v3.3.0
 	github.com/nicksnyder/go-i18n/v2 v2.6.0
 	github.com/veandco/go-sdl2 v0.4.40

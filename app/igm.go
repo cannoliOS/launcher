@@ -8,9 +8,7 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"os/signal"
 	"path/filepath"
-	"syscall"
 	"time"
 
 	_ "github.com/UncleJunVIP/certifiable"
@@ -20,6 +18,7 @@ import (
 
 const (
 	coolDownTime = 1 * time.Second
+	quitTimeout  = 1750 * time.Millisecond
 )
 
 type menuAction string
@@ -50,11 +49,12 @@ func init() {
 
 	utils.LoadConfig()
 }
-
 func main() {
 	if len(os.Args) < 2 {
 		log.Fatal("Usage: igm <rom file path>")
 	}
+
+	defer gaba.CloseLogger()
 
 	romPath = os.Args[1]
 	gameName, _ = utils.ItemNameCleaner(filepath.Base(romPath), true)
@@ -73,20 +73,11 @@ func main() {
 	}
 
 	retroArchExitChan := make(chan error, 1)
+	shutdownChan := make(chan bool, 1)
 
 	go func() {
 		err := retroArchCmd.Wait()
 		retroArchExitChan <- err
-	}()
-
-	shutdownChan := make(chan bool, 1)
-
-	go func() {
-		c := make(chan os.Signal, 1)
-		signal.Notify(c, os.Interrupt, syscall.SIGTERM)
-		<-c
-		logger.Debug("Received shutdown signal...")
-		shutdownChan <- true
 	}()
 
 	go func() {
@@ -101,20 +92,28 @@ func main() {
 
 	menuButtonHandler(shutdownChan)
 
-	logger.Debug("Shutting down IGM...")
+	gaba.ProcessMessage(fmt.Sprintf("%s %s...", utils.GetString("quitting"), gameName),
+		gaba.ProcessMessageOptions{}, func() (interface{}, error) {
+			logger.Debug("Waiting for retroarch process to exit...")
+			select {
+			case <-retroArchExitChan:
+				logger.Debug("RetroArch process exited")
+				time.Sleep(1750 * time.Millisecond)
+			case <-time.After(quitTimeout):
+				logger.Debug("Quit timeout reached... sigkilling.")
+				retroarch.Terminate()
+			}
 
-	if retroArchCmd.Process != nil {
-		select {
-		case <-retroArchExitChan:
-			// Process already exited
-		default:
-			// Process might still be running, try to kill it
-			retroArchCmd.Process.Kill()
-		}
-	}
+			logger.Debug("Shutting down IGM...")
+
+			gaba.HideWindow()
+
+			os.Exit(0)
+			return nil, nil
+		})
 }
 
-func menuButtonHandler(shutdownChan <-chan bool) {
+func menuButtonHandler(shutdownChan chan bool) {
 	var cooldownUntil time.Time
 
 	for {
@@ -131,7 +130,7 @@ func menuButtonHandler(shutdownChan <-chan bool) {
 					if e.State == sdl.PRESSED {
 						log.Println("Button press detected, toggling menu...")
 						cooldownUntil = time.Now().Add(coolDownTime)
-						toggleMenu()
+						toggleMenu(shutdownChan)
 					}
 				}
 
@@ -144,7 +143,7 @@ func menuButtonHandler(shutdownChan <-chan bool) {
 					if e.State == sdl.PRESSED {
 						log.Println("Button press detected, toggling menu...")
 						cooldownUntil = time.Now().Add(coolDownTime)
-						toggleMenu()
+						toggleMenu(shutdownChan)
 					}
 				}
 			}
@@ -154,33 +153,30 @@ func menuButtonHandler(shutdownChan <-chan bool) {
 	}
 }
 
-func toggleMenu() {
+func toggleMenu(shutdownChan chan bool) {
 	logger := utils.GetLoggerInstance()
 
-	retroarch.SendCommand(Screenshot, localIP, "55355")
-	time.Sleep(175 * time.Millisecond)
+	//retroarch.SendCommand(Screenshot, localIP, "55355")
+	time.Sleep(500 * time.Millisecond)
 
 	retroarch.Pause()
 
 	time.Sleep(200 * time.Millisecond)
 
 	gaba.ShowWindow()
-	command, message := igm()
+	command, _ := igm()
 
 	logger.Debug(fmt.Sprintf("In-game menu command: %s", command))
 
 	if command == Quit {
-		gaba.ProcessMessage(fmt.Sprintf("%s %s...", message, gameName),
-			gaba.ProcessMessageOptions{}, func() (interface{}, error) {
-				retroarch.Terminate()
-				time.Sleep(2000 * time.Millisecond)
-				return nil, nil
-			})
-	} else {
-		retroarch.Resume()
-		if command != Back {
-			retroarch.SendCommand(string(command), localIP, "55355")
-		}
+		logger.Debug("Quit command received, initiating retroarch termination...")
+		shutdownChan <- true
+		return
+	}
+
+	retroarch.Resume()
+	if command != Back {
+		retroarch.SendCommand(string(command), localIP, "55355")
 	}
 
 	logger.Debug("Hiding IGM...")
@@ -208,7 +204,7 @@ func igm() (menuAction, string) {
 		switch sr.Code {
 		case models.Back, models.Canceled:
 			logger.Debug("Menu cancelled or back pressed")
-			return Back, "" // Exit the menu without any command
+			return Back, ""
 
 		case models.Select:
 			action := sr.Output.(string)

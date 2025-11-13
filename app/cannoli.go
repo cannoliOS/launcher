@@ -6,10 +6,12 @@ import (
 	"cannoliOS/utils"
 	"fmt"
 	"os"
+	"time"
 
 	_ "github.com/UncleJunVIP/certifiable"
 	gaba "github.com/UncleJunVIP/gabagool/pkg/gabagool"
 	"github.com/idsulik/go-collections/v3/stack/arraystack"
+	"github.com/veandco/go-sdl2/sdl"
 )
 
 func init() {
@@ -129,6 +131,12 @@ func main() {
 				}
 
 				logger.Debug("Returning to cannoliOS after game launch")
+
+				for event := sdl.PollEvent(); event != nil; event = sdl.PollEvent() {
+					// Discard all events
+				}
+
+				time.Sleep(500 * time.Millisecond)
 
 				currentScreen = ui.GameList{
 					Directory:      currentScreen.(ui.GameList).Directory,
