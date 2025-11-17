@@ -7,7 +7,10 @@
     "GBA": "mgba",
     "MGBA": "mgba",
     "NES": "nestopia",
-    "SNES": "snes9x"
+    "FC": "nestopia",
+    "SNES": "snes9x",
+    "SFC": "snes9x",
+    "PS": "pcsx_rearmed"
   },
   "show_art": false,
   "hide_empty_directories": true,
