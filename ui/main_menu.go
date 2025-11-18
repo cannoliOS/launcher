@@ -6,6 +6,7 @@ import (
 	"cannoliOS/utils"
 
 	gaba "github.com/UncleJunVIP/gabagool/pkg/gabagool"
+	"github.com/UncleJunVIP/gabagool/pkg/gabagool/i18n"
 )
 
 type MainMenu struct {
@@ -34,8 +35,8 @@ func (m MainMenu) Draw() (models.ScreenReturn, error) {
 	options.EnableAction = true
 
 	options.FooterHelpItems = []gaba.FooterHelpItem{
-		{ButtonName: "X", HelpText: utils.GetString("tools")},
-		{ButtonName: "A", HelpText: utils.GetString("select")},
+		{ButtonName: "X", HelpText: i18n.GetString("tools")},
+		{ButtonName: "A", HelpText: i18n.GetString("select")},
 	}
 
 	sel, _ := gaba.List(options)

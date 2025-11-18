@@ -8,6 +8,7 @@ import (
 	"os"
 
 	"github.com/UncleJunVIP/gabagool/pkg/gabagool"
+	"github.com/UncleJunVIP/gabagool/pkg/gabagool/i18n"
 )
 
 func LoadConfig() error {
@@ -22,6 +23,7 @@ func LoadConfig() error {
 	}
 
 	gabagool.SetLogLevel(config.LogLevel)
+	i18n.SetWithCode(config.Language)
 	state.Init(&config)
 
 	return nil

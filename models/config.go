@@ -8,5 +8,6 @@ type Config struct {
 	CoreMapping          map[string]string `json:"core_mapping,omitempty"`
 	ShowArt              bool              `json:"show_art,omitempty"`
 	HideEmptyDirectories bool              `json:"hide_empty_directories,omitempty"`
+	Language             string            `json:"language,omitempty"`
 	LogLevel             slog.Level        `json:"log_level,omitempty"`
 }

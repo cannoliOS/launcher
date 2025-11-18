@@ -2,9 +2,9 @@ package ui
 
 import (
 	"cannoliOS/models"
-	"cannoliOS/utils"
 
 	gaba "github.com/UncleJunVIP/gabagool/pkg/gabagool"
+	"github.com/UncleJunVIP/gabagool/pkg/gabagool/i18n"
 )
 
 type InGameMenu struct {
@@ -21,37 +21,37 @@ func (igm InGameMenu) Name() models.ScreenName {
 func (igm InGameMenu) Draw() (models.ScreenReturn, error) {
 	menuItems := []gaba.MenuItem{
 		{
-			Text:     utils.GetString("resume"),
+			Text:     i18n.GetString("resume"),
 			Selected: false,
 			Focused:  false,
 			Metadata: "resume",
 		},
 		{
-			Text:     utils.GetString("save_state"),
+			Text:     i18n.GetString("save_state"),
 			Selected: false,
 			Focused:  false,
 			Metadata: "save_state",
 		},
 		{
-			Text:     utils.GetString("load_state"),
+			Text:     i18n.GetString("load_state"),
 			Selected: false,
 			Focused:  false,
 			Metadata: "load_state",
 		},
 		{
-			Text:     utils.GetString("reset_game"),
+			Text:     i18n.GetString("reset_game"),
 			Selected: false,
 			Focused:  false,
 			Metadata: "reset",
 		},
 		{
-			Text:     utils.GetString("settings"),
+			Text:     i18n.GetString("settings"),
 			Selected: false,
 			Focused:  false,
 			Metadata: "settings",
 		},
 		{
-			Text:     utils.GetString("quit"),
+			Text:     i18n.GetString("quit"),
 			Selected: false,
 			Focused:  false,
 			Metadata: "quit",
@@ -71,8 +71,8 @@ func (igm InGameMenu) Draw() (models.ScreenReturn, error) {
 	options.VisibleStartIndex = igm.Position.SelectedPosition
 
 	options.FooterHelpItems = []gaba.FooterHelpItem{
-		{ButtonName: "B", HelpText: utils.GetString("back")},
-		{ButtonName: "A", HelpText: utils.GetString("select")},
+		{ButtonName: "B", HelpText: i18n.GetString("back")},
+		{ButtonName: "A", HelpText: i18n.GetString("select")},
 	}
 
 	sel, err := gaba.List(options)

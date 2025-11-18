@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/UncleJunVIP/gabagool/pkg/gabagool"
+	"github.com/UncleJunVIP/gabagool/pkg/gabagool/i18n"
 	"github.com/idsulik/go-collections/v3/stack"
 )
 
@@ -96,9 +97,9 @@ func (gl GameList) Draw() (models.ScreenReturn, error) {
 	options.EnableAction = true
 	options.EnableMultiSelect = true
 	options.FooterHelpItems = []gabagool.FooterHelpItem{
-		{ButtonName: "B", HelpText: utils.GetString("back")},
-		{ButtonName: "X", HelpText: utils.GetString("search")},
-		{ButtonName: "Menu", HelpText: utils.GetString("help")},
+		{ButtonName: "B", HelpText: i18n.GetString("back")},
+		{ButtonName: "X", HelpText: i18n.GetString("search")},
+		{ButtonName: "Menu", HelpText: i18n.GetString("help")},
 	}
 
 	appState := state.Get()
