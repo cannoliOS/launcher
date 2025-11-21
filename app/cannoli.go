@@ -15,14 +15,14 @@ import (
 )
 
 func init() {
-	gaba.InitSDL(gaba.Options{
+	gaba.Init(gaba.Options{
 		WindowTitle:    "cannoli_OS",
 		ShowBackground: true,
 		IsCannoli:      true,
 		LogFilename:    "cannoliOS.log",
 	})
 
-	logger := utils.GetLoggerInstance()
+	logger := utils.GetLogger()
 
 	err := utils.LoadConfig()
 	if err != nil {
@@ -34,13 +34,13 @@ func init() {
 }
 
 func exit() {
-	gaba.CloseSDL()
+	gaba.Close()
 }
 
 func main() {
 	defer exit()
 
-	logger := utils.GetLoggerInstance()
+	logger := utils.GetLogger()
 	var currentScreen models.Screen
 
 	currentScreen = ui.MainMenu{

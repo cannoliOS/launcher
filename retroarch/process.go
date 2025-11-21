@@ -12,7 +12,7 @@ import (
 )
 
 func Launch(gameName string, romPath string) (*exec.Cmd, error) {
-	logger := utils.GetLoggerInstance()
+	logger := utils.GetLogger()
 
 	corePath, err := determineCorePath(romPath)
 	if err != nil {
@@ -20,7 +20,7 @@ func Launch(gameName string, romPath string) (*exec.Cmd, error) {
 	}
 
 	args := []string{
-		//"--config", "/mnt/SDCARD/System/RetroArch/retroarch.cfg",
+		"--config", "/mnt/SDCARD/System/RetroArch/retroarch.cfg",
 		"-L", corePath,
 		romPath,
 	}
@@ -77,7 +77,7 @@ func Launch(gameName string, romPath string) (*exec.Cmd, error) {
 }
 
 func Terminate() {
-	logger := utils.GetLoggerInstance()
+	logger := utils.GetLogger()
 	pid := getRetroArchPID()
 
 	if pid == 0 {
@@ -127,7 +127,7 @@ func getCoreExtension() (string, error) {
 	case "linux":
 		return ".so", nil
 	default:
-		utils.GetLoggerInstance().Error("Could not determine core extension for OS!")
+		utils.GetLogger().Error("Could not determine core extension for OS!")
 		return "", fmt.Errorf("could not determine core extension for OS")
 	}
 }

@@ -5,7 +5,7 @@ import (
 	"cannoliOS/state"
 	"cannoliOS/utils"
 
-	gaba "github.com/UncleJunVIP/gabagool/pkg/gabagool"
+	"github.com/UncleJunVIP/gabagool/pkg/gabagool"
 	"github.com/UncleJunVIP/gabagool/pkg/gabagool/i18n"
 )
 
@@ -19,13 +19,13 @@ func (m MainMenu) Name() models.ScreenName {
 }
 
 func (m MainMenu) Draw() (models.ScreenReturn, error) {
-	var menuItems []gaba.MenuItem
+	var menuItems []gabagool.MenuItem
 
 	gameMenuItems := buildGameDirectoryMenuItems()
 
 	menuItems = append(menuItems, gameMenuItems...)
 
-	options := gaba.DefaultListOptions("cannoli_OS", menuItems)
+	options := gabagool.DefaultListOptions("cannoli_OS", menuItems)
 
 	selectedIndex, visibleStartIndex := 0, 0 //TODO replace me with actual stack state
 	options.SelectedIndex = selectedIndex
@@ -34,12 +34,12 @@ func (m MainMenu) Draw() (models.ScreenReturn, error) {
 	options.EnableMultiSelect = false
 	options.EnableAction = true
 
-	options.FooterHelpItems = []gaba.FooterHelpItem{
+	options.FooterHelpItems = []gabagool.FooterHelpItem{
 		{ButtonName: "X", HelpText: i18n.GetString("tools")},
 		{ButtonName: "A", HelpText: i18n.GetString("select")},
 	}
 
-	sel, _ := gaba.List(options)
+	sel, _ := gabagool.List(options)
 
 	if sel.IsSome() && sel.Unwrap().ActionTriggered {
 		return models.ScreenReturn{
@@ -62,20 +62,20 @@ func (m MainMenu) Draw() (models.ScreenReturn, error) {
 	}, nil
 }
 
-func buildGameDirectoryMenuItems() []gaba.MenuItem {
+func buildGameDirectoryMenuItems() []gabagool.MenuItem {
 	fb := utils.NewFileBrowser()
 
 	if err := fb.CWD(utils.GetRomPath(), state.Get().Config.HideEmptyDirectories); err != nil {
-		utils.GetLoggerInstance().Error("Failed to fetch ROM directories", "error", err)
+		utils.GetLogger().Error("Failed to fetch ROM directories", "error", err)
 		utils.ShowMessage("Error fetching ROM directories", 5000)
 	}
 
-	var menuItems []gaba.MenuItem
+	var menuItems []gabagool.MenuItem
 	for _, item := range fb.Items {
 		if item.IsDirectory {
 			gameDirectory := item.ToDirectory()
 			tagless, _ := utils.ItemNameCleaner(gameDirectory.DisplayName, true)
-			menuItems = append(menuItems, gaba.MenuItem{
+			menuItems = append(menuItems, gabagool.MenuItem{
 				Text:     tagless,
 				Selected: false,
 				Focused:  false,

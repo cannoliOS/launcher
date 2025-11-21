@@ -13,7 +13,7 @@ import (
 )
 
 func Pause() {
-	logger := utils.GetLoggerInstance()
+	logger := utils.GetLogger()
 	pid := getRetroArchPID()
 
 	time.Sleep(250 * time.Millisecond)
@@ -34,7 +34,7 @@ func Pause() {
 }
 
 func Resume() {
-	logger := utils.GetLoggerInstance()
+	logger := utils.GetLogger()
 	pid := getRetroArchPID()
 
 	process, err := os.FindProcess(pid)
@@ -53,7 +53,7 @@ func Resume() {
 }
 
 func SendCommand(command, host, port string) error {
-	logger := utils.GetLoggerInstance()
+	logger := utils.GetLogger()
 
 	addr, err := net.ResolveUDPAddr("udp", host+":"+port)
 	if err != nil {
@@ -78,7 +78,7 @@ func SendCommand(command, host, port string) error {
 }
 
 func getRetroArchPID() int {
-	logger := utils.GetLoggerInstance()
+	logger := utils.GetLogger()
 
 	cmd := exec.Command("pgrep", "-f", "retroarch")
 	output, err := cmd.Output()

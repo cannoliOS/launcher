@@ -7,7 +7,7 @@ import (
 	"log/slog"
 	"os"
 
-	"github.com/UncleJunVIP/gabagool/pkg/gabagool"
+	gaba "github.com/UncleJunVIP/gabagool/pkg/gabagool"
 	"github.com/UncleJunVIP/gabagool/pkg/gabagool/i18n"
 )
 
@@ -22,15 +22,15 @@ func LoadConfig() error {
 		return err
 	}
 
-	gabagool.SetLogLevel(config.LogLevel)
+	gaba.SetLogLevel(config.LogLevel)
 	i18n.SetWithCode(config.Language)
 	state.Init(&config)
 
 	return nil
 }
 
-func GetLoggerInstance() *slog.Logger {
-	return gabagool.GetLoggerInstance()
+func GetLogger() *slog.Logger {
+	return gaba.GetLogger()
 }
 
 func GetConfig() *models.Config {

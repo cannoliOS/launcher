@@ -13,6 +13,7 @@ import (
 
 	_ "github.com/UncleJunVIP/certifiable"
 	gaba "github.com/UncleJunVIP/gabagool/pkg/gabagool"
+	"github.com/UncleJunVIP/gabagool/pkg/gabagool/i18n"
 	"github.com/veandco/go-sdl2/sdl"
 )
 
@@ -40,7 +41,7 @@ var romPath string
 var gameName string
 
 func init() {
-	gaba.InitSDL(gaba.Options{
+	gaba.Init(gaba.Options{
 		WindowTitle:    "In-Game Menu",
 		ShowBackground: true,
 		IsCannoli:      true,
@@ -50,16 +51,16 @@ func init() {
 	utils.LoadConfig()
 }
 func main() {
+	defer gaba.Close()
+
 	if len(os.Args) < 2 {
 		log.Fatal("Usage: igm <rom file path>")
 	}
 
-	defer gaba.CloseLogger()
-
 	romPath = os.Args[1]
 	gameName, _ = utils.ItemNameCleaner(filepath.Base(romPath), true)
 
-	logger := utils.GetLoggerInstance()
+	logger := utils.GetLogger()
 
 	logger.Debug(fmt.Sprintf("Starting IGM for %s...", gameName))
 	logger.Debug(fmt.Sprintf("ROM path: %s", romPath))
@@ -92,7 +93,7 @@ func main() {
 
 	menuButtonHandler(shutdownChan)
 
-	gaba.ProcessMessage(fmt.Sprintf("%s %s...", utils.GetString("quitting"), gameName),
+	gaba.ProcessMessage(fmt.Sprintf("%s %s...", i18n.GetString("quitting"), gameName),
 		gaba.ProcessMessageOptions{}, func() (interface{}, error) {
 			logger.Debug("Waiting for retroarch process to exit...")
 			select {
@@ -139,13 +140,16 @@ func menuButtonHandler(shutdownChan chan bool) {
 					continue
 				}
 
-				if gaba.Button(e.Button) == gaba.ButtonMenu {
-					if e.State == sdl.PRESSED {
-						log.Println("Button press detected, toggling menu...")
-						cooldownUntil = time.Now().Add(coolDownTime)
-						toggleMenu(shutdownChan)
-					}
-				}
+				// TODO Fix this with virtual buttons
+				//var menuButton gaba.Button = 5
+				//
+				//if gaba.Button(e.Button) == menuButton {
+				//	if e.State == sdl.PRESSED {
+				//		log.Println("Button press detected, toggling menu...")
+				//		cooldownUntil = time.Now().Add(coolDownTime)
+				//		toggleMenu(shutdownChan)
+				//	}
+				//}
 			}
 		}
 
@@ -154,7 +158,7 @@ func menuButtonHandler(shutdownChan chan bool) {
 }
 
 func toggleMenu(shutdownChan chan bool) {
-	logger := utils.GetLoggerInstance()
+	logger := utils.GetLogger()
 
 	//retroarch.SendCommand(Screenshot, localIP, "55355")
 	time.Sleep(500 * time.Millisecond)
@@ -184,7 +188,7 @@ func toggleMenu(shutdownChan chan bool) {
 }
 
 func igm() (menuAction, string) {
-	logger := utils.GetLoggerInstance()
+	logger := utils.GetLogger()
 
 	logger.Debug("Showing in-game menu for ROM", "game_name", gameName)
 
@@ -215,19 +219,19 @@ func igm() (menuAction, string) {
 				return ResumeGame, ""
 
 			case "save_state":
-				return SaveState, utils.GetString("saving")
+				return SaveState, i18n.GetString("saving")
 
 			case "load_state":
-				return LoadState, utils.GetString("loading")
+				return LoadState, i18n.GetString("loading")
 
 			case "reset":
-				return Reset, utils.GetString("resetting")
+				return Reset, i18n.GetString("resetting")
 
 			case "settings":
 				return Settings, ""
 
 			case "quit":
-				return Quit, utils.GetString("quitting")
+				return Quit, i18n.GetString("quitting")
 			default:
 				logger.Debug("Unhandled menu action", "action", action)
 				continue

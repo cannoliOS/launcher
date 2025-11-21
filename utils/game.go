@@ -6,7 +6,7 @@ import (
 )
 
 func LaunchROM(gameName string, romPath string) {
-	logger := GetLoggerInstance()
+	logger := GetLogger()
 	logger.Debug(fmt.Sprintf("ROM path: %s", romPath))
 
 	igmPath := "./igm"

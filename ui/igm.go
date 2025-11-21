@@ -3,7 +3,7 @@ package ui
 import (
 	"cannoliOS/models"
 
-	gaba "github.com/UncleJunVIP/gabagool/pkg/gabagool"
+	"github.com/UncleJunVIP/gabagool/pkg/gabagool"
 	"github.com/UncleJunVIP/gabagool/pkg/gabagool/i18n"
 )
 
@@ -19,7 +19,7 @@ func (igm InGameMenu) Name() models.ScreenName {
 }
 
 func (igm InGameMenu) Draw() (models.ScreenReturn, error) {
-	menuItems := []gaba.MenuItem{
+	menuItems := []gabagool.MenuItem{
 		{
 			Text:     i18n.GetString("resume"),
 			Selected: false,
@@ -64,18 +64,18 @@ func (igm InGameMenu) Draw() (models.ScreenReturn, error) {
 		title = igm.GameName
 	}
 
-	options := gaba.DefaultListOptions(title, menuItems)
+	options := gabagool.DefaultListOptions(title, menuItems)
 
 	options.SmallTitle = true
 	options.SelectedIndex = igm.Position.SelectedIndex
 	options.VisibleStartIndex = igm.Position.SelectedPosition
 
-	options.FooterHelpItems = []gaba.FooterHelpItem{
+	options.FooterHelpItems = []gabagool.FooterHelpItem{
 		{ButtonName: "B", HelpText: i18n.GetString("back")},
 		{ButtonName: "A", HelpText: i18n.GetString("select")},
 	}
 
-	sel, err := gaba.List(options)
+	sel, err := gabagool.List(options)
 	if err != nil {
 		return models.ScreenReturn{
 			Code: models.Canceled,

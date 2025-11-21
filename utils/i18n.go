@@ -10,7 +10,7 @@ import (
 func init() {
 	err := i18n.InitI18N([]string{"resources/i18n/en.json", "resources/i18n/es.json"})
 	if err != nil {
-		gabagool.GetLoggerInstance().Error("Failed to initialize i18n", "error", err)
+		gabagool.GetLogger().Error("Failed to initialize i18n", "error", err)
 		os.Exit(1)
 	}
 }
